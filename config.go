@@ -89,6 +89,8 @@ func (c CollectorName) GetInstance() (collector, error) {
 		return ChassisCollector{}, nil
 	case SMLANModeCollectorName:
 		return SMLANModeCollector{}, nil
+	case FRUCollectorName:
+		return FRUCollector{}, nil
 	}
 	return nil, fmt.Errorf("invalid collector: %s", string(c))
 }
