@@ -53,6 +53,7 @@ var (
 	bmcWatchdogPretimeoutIntervalRegex  = regexp.MustCompile(`^Pre-Timeout Interval:\s*(?P<value>[0-9.]*)\s*seconds.*`)
 	bmcWatchdogInitialCountdownRegex    = regexp.MustCompile(`^Initial Countdown:\s*(?P<value>[0-9.]*)\s*seconds.*`)
 	bmcWatchdogCurrentCountdownRegex    = regexp.MustCompile(`^Current Countdown:\s*(?P<value>[0-9.]*)\s*seconds.*`)
+	ipmiFRUProductSerialNumberRegex     = regexp.MustCompile(`^.*FRU Product Serial Number:\s*(?P<value>.*)`)
 )
 
 // Result represents the outcome of a call to one of the FreeIPMI tools.
@@ -470,4 +471,11 @@ func GetSELEvents(ipmiOutput Result) ([]SELEventData, error) {
 		})
 	}
 	return events, nil
+}
+
+func GetFRUProductSerialNumber(ipmiOutput Result) (string, error) {
+	if ipmiOutput.err != nil {
+		return "", fmt.Errorf("%s: %s", ipmiOutput.err, ipmiOutput.output)
+	}
+	return getValue(ipmiOutput.output, ipmiFRUProductSerialNumberRegex)
 }
