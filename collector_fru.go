@@ -44,11 +44,11 @@ func (c FRUCollector) Cmd() string {
 }
 
 func (c FRUCollector) Args() []string {
-	return []string{}
+	return []string{"--device-id=0"}
 }
 
 func (c FRUCollector) Collect(result freeipmi.Result, ch chan<- prometheus.Metric, target ipmiTarget) (int, error) {
-	fruSerial, err := freeipmi.GetFRUSerialNumber(result)
+	fruProductSerial, err := freeipmi.GetFRUProductSerialNumber(result)
 	if err != nil {
 		level.Error(logger).Log("msg", "Failed to collect FRU data", "target", targetName(target.host), "error", err)
 		return 0, err
@@ -57,7 +57,7 @@ func (c FRUCollector) Collect(result freeipmi.Result, ch chan<- prometheus.Metri
 		fruInfoDesc,
 		prometheus.GaugeValue,
 		1,
-		fruSerial,
+		fruProductSerial,
 	)
 	return 1, nil
 }

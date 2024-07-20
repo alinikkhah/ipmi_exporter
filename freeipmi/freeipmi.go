@@ -53,7 +53,7 @@ var (
 	bmcWatchdogPretimeoutIntervalRegex  = regexp.MustCompile(`^Pre-Timeout Interval:\s*(?P<value>[0-9.]*)\s*seconds.*`)
 	bmcWatchdogInitialCountdownRegex    = regexp.MustCompile(`^Initial Countdown:\s*(?P<value>[0-9.]*)\s*seconds.*`)
 	bmcWatchdogCurrentCountdownRegex    = regexp.MustCompile(`^Current Countdown:\s*(?P<value>[0-9.]*)\s*seconds.*`)
-	ipmiFRUSerialNumberRegex            = regexp.MustCompile(`^.*FRU Product Serial Number:\s*(?P<value>.*)`)
+	ipmiFRUProductSerialNumberRegex     = regexp.MustCompile(`^.*FRU Product Serial Number:\s*(?P<value>.*)`)
 )
 
 // Result represents the outcome of a call to one of the FreeIPMI tools.
@@ -338,13 +338,6 @@ func GetSELInfoFreeSpace(ipmiOutput Result) (float64, error) {
 	return strconv.ParseFloat(value, 64)
 }
 
-func GetFRUSerialNumber(ipmiOutput Result) (string, error) {
-	if ipmiOutput.err != nil {
-		return "", fmt.Errorf("%s: %s", ipmiOutput.err, ipmiOutput.output)
-	}
-	return getValue(ipmiOutput.output, ipmiFRUSerialNumberRegex)
-}
-
 func GetRawOctets(ipmiOutput Result) ([]string, error) {
 	if ipmiOutput.err != nil {
 		return nil, fmt.Errorf("%s: %s", ipmiOutput.err, ipmiOutput.output)
@@ -478,4 +471,11 @@ func GetSELEvents(ipmiOutput Result) ([]SELEventData, error) {
 		})
 	}
 	return events, nil
+}
+
+func GetFRUProductSerialNumber(ipmiOutput Result) (string, error) {
+	if ipmiOutput.err != nil {
+		return "", fmt.Errorf("%s: %s", ipmiOutput.err, ipmiOutput.output)
+	}
+	return getValue(ipmiOutput.output, ipmiFRUProductSerialNumberRegex)
 }
